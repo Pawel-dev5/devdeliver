@@ -7,12 +7,21 @@ import "./App.css";
 // } from "react-router-dom";
 import { BrowserRouter as Router, Link } from 'react-router-dom'
 import { Route, useHistory } from 'react-router-dom';
+import SingleBook from "./components/singlebook";
+import useModal, { Provider } from "use-react-modal";
 
-const API_URL = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
+const API_URL = "https://www.googleapis.com/books/v1/volumes?q=intitle:";
 
 
 const SearchInfo = () => {
   const [number, setNumber] = useState("");
+
+
+  const data = {
+    key: "AIzaSyAYqfMYbCl0IxItamsRqvXqJXfX2kcwhXI"
+  }
+  console.log(data)
+  const urlData = new URLSearchParams(Object.entries(data));
 
   const handleChangeNumber = (e) => {
     setNumber(e.target.value)
@@ -22,28 +31,27 @@ const SearchInfo = () => {
   let url = ` ${API_URL}${number}`;
 
   function handleClick() {
+    history.push("")
     history.push(url);
   }
 
   const BookInfo = ({ number }) => {
     const [items, setItems] = useState([]);
+    const [itemsFiltred, setItemsFiltred] = useState([]);
     const [error, setError] = useState("");
+
+
     const isbn = number;
-    // const [number, setNumber] = useState("");
     console.log(isbn)
 
-    // const handleChangeNumber = (e) => {
-    //   setNumber(e.target.value)
-    // }
-
     useEffect(() => {
-      fetch(`${API_URL}${isbn}`)
+      fetch(`${API_URL}${isbn}&${urlData}`)
         .then(resp => resp.json())
         .then(data => {
           if (data.items) {
             setItems(data.items);
           } else {
-            setError("Brak pozycji, sprawdź poprawność numeru ISBN");
+            setError("Brak danych");
           }
         })
         .catch(() => {
@@ -55,32 +63,62 @@ const SearchInfo = () => {
       return error;
     }
     if (items.length === 0) {
-      return "Trwa ładowanie";
+      return "Brak danych";
     }
-    // if (items.volumeInfo.imageLinks.length === 0){
+    const ClearFilters = () => {
+
+      setItems(items);
+    }
+
+    const Filter = () => {
+      let itemsFiltred = items
+      const MountaineersCategory = itemsFiltred.filter((item) => item.volumeInfo.categories);
+      // const MountaineersCategory = items.filter(Mount);
+
+      setItemsFiltred(MountaineersCategory)
+
+      console.log(MountaineersCategory)
+      // return(
+      // <ul>
+      //   {MountaineersCategory.map(cat => {
+      //     return (
+      //       <div>
+      //         <li>
+      //         <span>Categories:</span> {cat.volumeInfo.categories}  <br />
+
+      //         </li>
+      //       </div>
+      //     )
+      //   })}
+      // </ul>
+      // )
+    }
+    // console.log(Filter(items, 'ap'))  // ['apple', 'grapes']
+
+    const FilterDisc = () => {
+      const Discription = items.filter((item) => item.volumeInfo.description);
+      setItems(Discription)
+    }
+    // if (items.volumeInfo.imageLinks.length !== 0) {
     //   return "Brak zdjęcia"
     // }
-    return (
-      <div className="MainBox">
-        <ul>
-          {items.map(item => {
-            return (
-              <div className="TitleName">
-                <img src={item.volumeInfo.imageLinks.thumbnail} alt="okładka"></img>
-                <li key={item.id}>
-                  <span>Tytuł:</span> {item.volumeInfo.title}<br />
-                  <span>Autor:</span> {item.volumeInfo.authors}<br />
-                  <span>Data publikacji:</span> {item.volumeInfo.publishedDate}  <br />
-                  <span>Opis:</span> {item.volumeInfo.description}  <br />
-                  <span>Kategoria:</span> {item.volumeInfo.categories}  <br />
 
-                </li>
-              </div>
-            );
-          })}
-        </ul>
-      </div>
-    );
+    console.log(items)
+    console.log(itemsFiltred)
+
+    if (items && items.length) {
+      return (
+        <>
+          <button onClick={Filter}>Filtruj</button>
+          <button onClick={FilterDisc}>Pokaż tylko te z opisem</button>
+          <button onClick={handleChangeNumber} value={items}>Wyczyść filty</button>
+
+          <SingleBook items={items} key={items.id} />
+        </>
+      );
+    } else {
+      return <div>No items found</div>
+    }
   };
 
 
@@ -89,7 +127,7 @@ const SearchInfo = () => {
       <div className="MainBox">
         <label>
           <input
-            placeholder="Wpisz numer ISBN"
+            placeholder="Wpisz tytuł"
             type="text"
             value={number}
             // onChange={handleClick}
@@ -102,10 +140,16 @@ const SearchInfo = () => {
         </label>
       </div>
       {number ? (
-        <BookInfo number={number} />
+        <>
+          <Provider background="rgba(0, 0, 0, 0.9)">
+
+            <BookInfo number={number} key={number.id} />
+          </Provider>
+
+        </>
       ) : (
           <div className="MainBox">
-            Wpisz numer ISBN, aby wyszukać swoją ulubioną książkę
+            Zacznij pisać, aby wyszukać swoją ulubioną książkę
           </div>
         )}
     </>
@@ -121,10 +165,11 @@ export default function App({ API_URL, number }) {
     // <BrowserRouter>
     //   <Switch>
     <Router>
+      {/* <SingleBook number={number} key={number.id}/> */}
       {/* <Route> */}
       <Link to={`/${number}`} value={number} />
       <SearchInfo>
-        <Route path="/:number" component={SearchInfo}></Route>
+        {/* <Route path="/:number" component={SearchInfo}></Route> */}
       </SearchInfo>
 
       {/* </Link> */}
