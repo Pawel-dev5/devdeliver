@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import BookInfo from "./components/Books"
+// import BookInfo from "./components/Books" 
 import { Provider } from "use-react-modal";
 import SingleBook from "./components/singlebook";
 
@@ -46,7 +46,7 @@ const SearchInfo = () => {
       return error;
     }
     if (items.length === 0) {
-      return "Brak danych";
+      return "Ładuję dane";
     }
 
     const Filter = () => {
@@ -82,7 +82,16 @@ const SearchInfo = () => {
   };
 
   return (
-    <>
+    <div>
+      
+      <div className="">
+        <div className="header">
+          <h1 className="">Twoja baza książek</h1>
+          <p className="">
+            Wyszukuj swoje ulubione książki. Dane dostarcza <a href="https://developers.google.com/" target="_blank">Google API</a>.
+          </p>
+        </div>
+      </div>
       <form onSubmit={handleChangeNumber}>
 
         <div className="MainBox" >
@@ -117,7 +126,7 @@ const SearchInfo = () => {
             </div>
           )}
       </div>
-    </>
+    </div>
   );
 }
 
