@@ -1,51 +1,34 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-// import {
-//   BrowserRouter,
-//   Route,
-//   Switch,
-// } from "react-router-dom";
-import { BrowserRouter as Router, Link } from 'react-router-dom'
-import { Route, useHistory } from 'react-router-dom';
+import BookInfo from "./components/Books"
+import { Provider } from "use-react-modal";
 import SingleBook from "./components/singlebook";
-import useModal, { Provider } from "use-react-modal";
-
-const API_URL = "https://www.googleapis.com/books/v1/volumes?q=intitle:";
 
 
 const SearchInfo = () => {
   const [number, setNumber] = useState("");
 
-
-  const data = {
-    key: "AIzaSyAYqfMYbCl0IxItamsRqvXqJXfX2kcwhXI"
-  }
-  console.log(data)
-  const urlData = new URLSearchParams(Object.entries(data));
-
   const handleChangeNumber = (e) => {
+    e.preventDefault();
+
     setNumber(e.target.value)
   }
-  // console.log(number)
-  let history = useHistory();
-  let url = ` ${API_URL}${number}`;
-
-  function handleClick() {
-    history.push("")
-    history.push(url);
-  }
-
   const BookInfo = ({ number }) => {
     const [items, setItems] = useState([]);
     const [itemsFiltred, setItemsFiltred] = useState([]);
     const [error, setError] = useState("");
-
-
+    
+    const API_URL = "https://www.googleapis.com/books/v1/volumes?q=intitle:";
+    const data = {
+        key: "AIzaSyAYqfMYbCl0IxItamsRqvXqJXfX2kcwhXI"
+      }
+      console.log(number)
+      const urlData = new URLSearchParams(Object.entries(data));
     const isbn = number;
     console.log(isbn)
 
     useEffect(() => {
-      fetch(`${API_URL}${isbn}&${urlData}`)
+      fetch(`${API_URL}${number}&${urlData}`)
         .then(resp => resp.json())
         .then(data => {
           if (data.items) {
@@ -65,43 +48,18 @@ const SearchInfo = () => {
     if (items.length === 0) {
       return "Brak danych";
     }
-    const ClearFilters = () => {
-
-      setItems(items);
-    }
 
     const Filter = () => {
       let itemsFiltred = items
       const MountaineersCategory = itemsFiltred.filter((item) => item.volumeInfo.categories);
-      // const MountaineersCategory = items.filter(Mount);
-
       setItemsFiltred(MountaineersCategory)
-
       console.log(MountaineersCategory)
-      // return(
-      // <ul>
-      //   {MountaineersCategory.map(cat => {
-      //     return (
-      //       <div>
-      //         <li>
-      //         <span>Categories:</span> {cat.volumeInfo.categories}  <br />
-
-      //         </li>
-      //       </div>
-      //     )
-      //   })}
-      // </ul>
-      // )
     }
-    // console.log(Filter(items, 'ap'))  // ['apple', 'grapes']
 
     const FilterDisc = () => {
       const Discription = items.filter((item) => item.volumeInfo.description);
       setItems(Discription)
     }
-    // if (items.volumeInfo.imageLinks.length !== 0) {
-    //   return "Brak zdjęcia"
-    // }
 
     console.log(items)
     console.log(itemsFiltred)
@@ -109,11 +67,13 @@ const SearchInfo = () => {
     if (items && items.length) {
       return (
         <>
+        <div className="filterButtons">
           <button onClick={Filter}>Filtruj</button>
           <button onClick={FilterDisc}>Pokaż tylko te z opisem</button>
-          <button onClick={handleChangeNumber} value={items}>Wyczyść filty</button>
+          <button>Wyczyść wszystko</button>
+        </div>
 
-          <SingleBook items={items} key={items.id} />
+          {items.map(item => <SingleBook item={item} key={item.id} />)}
         </>
       );
     } else {
@@ -121,61 +81,120 @@ const SearchInfo = () => {
     }
   };
 
-
   return (
     <>
-      <div className="MainBox">
-        <label>
-          <input
-            placeholder="Wpisz tytuł"
-            type="text"
-            value={number}
-            // onChange={handleClick}
-            onChange={handleChangeNumber}
-          >
-          </input>
-          <button type="button"
-            onClick={handleClick}
-          >Szukaj</button>
-        </label>
+      <form onSubmit={handleChangeNumber}>
+
+        <div className="MainBox" >
+          <label>
+            <input
+              placeholder="Wpisz tytuł"
+              type="text"
+              value={number}
+              onChange={handleChangeNumber}
+              // onChange={change}
+            >
+            </input>
+            <button type="button"
+              // onClick={handleClick}
+              // onClick={handleChangeNumber}s
+            >Szukaj</button>
+          </label>
+        </div>
+        
+      </form>
+      <div className="content-container">
+
+        {number ? (
+          <>
+            <Provider background="rgba(0, 0, 0, 0.9)">
+              <BookInfo number={number} />
+            </Provider>
+          </>
+        ) : (
+            <div className="MainBox">
+              Zacznij pisać, aby wyszukać swoją ulubioną książkę
+            </div>
+          )}
       </div>
-      {number ? (
-        <>
-          <Provider background="rgba(0, 0, 0, 0.9)">
-
-            <BookInfo number={number} key={number.id} />
-          </Provider>
-
-        </>
-      ) : (
-          <div className="MainBox">
-            Zacznij pisać, aby wyszukać swoją ulubioną książkę
-          </div>
-        )}
     </>
   );
 }
 
 
 
-export default function App({ API_URL, number }) {
+export default function App() {
   //   let url = number;
   // let newUrl = API_URL ;
   return (
-    // <BrowserRouter>
-    //   <Switch>
-    <Router>
-      {/* <SingleBook number={number} key={number.id}/> */}
-      {/* <Route> */}
-      <Link to={`/${number}`} value={number} />
-      <SearchInfo>
-        {/* <Route path="/:number" component={SearchInfo}></Route> */}
-      </SearchInfo>
 
-      {/* </Link> */}
-      {/* </Route> */}
-    </Router>
+    <SearchInfo>
+      {/* <Route path="/:number" component={SearchInfo}></Route> */}
+    </SearchInfo>
+
 
 
   )
 }
+
+// import React, {useState} from "react";
+// import {MOVIES_FETCH, MOVIES_FETCH_ERROR} from "./Actions";
+// // import Navigation from "./Components/Navigation";
+// import Search from "../src/components/Search";
+// import Books from "../src/components/Books";
+// // import Footer from "./Components/Footer";
+
+// const App = () => {
+//   const [books, setBooks] = useState([]);
+//   const [error, setError] = useState(false);
+//   const dispatch = (action) => {
+//     switch (action.type) {
+//       case MOVIES_FETCH: {
+//         setBooks(action.payload);
+//         setError(false);
+//         break;
+//       }
+
+//       case MOVIES_FETCH_ERROR: {
+//         setBooks([]);
+//         setError(action.payload);
+//         break;
+//       }
+
+//       default:
+//         console.warn("You should specify action type.");
+//     }
+//   };
+
+//   console.log(books)
+//   return (
+//     <>
+//       {/* <Navigation/> */}
+
+//       <div className="jumbotron jumbotron-fluid">
+//         <div className="container">
+//           <h1 className="display-4">Twoja baza filmów</h1>
+//           <p className="lead">
+//             Wyszukuj swoje ulubione filmy. Dane dostarcza <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer">The Movie
+//             DB</a>.
+//           </p>
+//         </div>
+//       </div>
+
+//       <div className="container py-5">
+//         <div className="row">
+//           <div className="col-md text-center">
+//             <h3 className="lead">Znajdź swój ulubiony film!</h3>
+//             <Search dispatch={dispatch}/>
+//           </div>
+//         </div>
+//       </div>
+
+//       {error !== false && <div className="col-md text-center"><h3>{error.message}</h3></div>}
+//   <Books books={books}/>
+//       {/* <Footer/> */}
+//     </>
+//   );
+// };
+
+// export default App;
