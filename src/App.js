@@ -129,81 +129,13 @@ const SearchInfo = () => {
     </div>
   );
 }
-
-
-
 export default function App() {
-  //   let url = number;
-  // let newUrl = API_URL ;
   return (
 
     <SearchInfo>
-      {/* <Route path="/:number" component={SearchInfo}></Route> */}
     </SearchInfo>
 
 
 
   )
 }
-
-// import React, {useState} from "react";
-// import {MOVIES_FETCH, MOVIES_FETCH_ERROR} from "./Actions";
-// // import Navigation from "./Components/Navigation";
-// import Search from "../src/components/Search";
-// import Books from "../src/components/Books";
-// // import Footer from "./Components/Footer";
-
-// const App = () => {
-//   const [books, setBooks] = useState([]);
-//   const [error, setError] = useState(false);
-//   const dispatch = (action) => {
-//     switch (action.type) {
-//       case MOVIES_FETCH: {
-//         setBooks(action.payload);
-//         setError(false);
-//         break;
-//       }
-
-//       case MOVIES_FETCH_ERROR: {
-//         setBooks([]);
-//         setError(action.payload);
-//         break;
-//       }
-
-//       default:
-//         console.warn("You should specify action type.");
-//     }
-//   };
-
-//   console.log(books)
-//   return (
-//     <>
-//       {/* <Navigation/> */}
-
-//       <div className="jumbotron jumbotron-fluid">
-//         <div className="container">
-//           <h1 className="display-4">Twoja baza filmów</h1>
-//           <p className="lead">
-//             Wyszukuj swoje ulubione filmy. Dane dostarcza <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer">The Movie
-//             DB</a>.
-//           </p>
-//         </div>
-//       </div>
-
-//       <div className="container py-5">
-//         <div className="row">
-//           <div className="col-md text-center">
-//             <h3 className="lead">Znajdź swój ulubiony film!</h3>
-//             <Search dispatch={dispatch}/>
-//           </div>
-//         </div>
-//       </div>
-
-//       {error !== false && <div className="col-md text-center"><h3>{error.message}</h3></div>}
-//   <Books books={books}/>
-//       {/* <Footer/> */}
-//     </>
-//   );
-// };
-
-// export default App;
