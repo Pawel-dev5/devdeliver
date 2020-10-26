@@ -25,7 +25,7 @@ const SingleBook = ({ item }) => {
                             <br /><br /><br />
                             <div className="ModalBox">
                                 {isOpen && (
-                                    <Modal >
+                                    <Modal  item={item} key={item.id}>
                                         <div className="Close" onClick={_.debounce(closeModal, 300)}>
                                             <a href="/">X</a>
                                         </div>

@@ -1,6 +1,7 @@
 import React from "react";
 const Modal1 = ({ item }) => {
-    if (item.volumeInfo.imageLinks === undefined) {
+
+    if (item.volumeInfo.imageLinks === undefined && item.saleInfo.buyLink === undefined) {
         return (
             <>
                 <div className="Modal">
@@ -39,7 +40,10 @@ const Modal1 = ({ item }) => {
                                 <span>Autor:</span> {item.volumeInfo.authors} <br />
                                 <span>Data publikacji:</span> {item.volumeInfo.publishedDate}  <br />
                                 <span>Kategorie:</span> {item.volumeInfo.categories}  <br />
-                                <br /><br />
+                                {/* <span>Cena:</span> {item.saleInfo.listPrice.amount}{item.saleInfo.listPrice.currencyCode} <br/> */}
+                                <a href={item.saleInfo.buyLink} id="shop" target="_blank" rel="noopener noreferrer">
+                                    <button href={item.saleInfo.buyLink} type="button">Przejdź do sklepu</button>
+                                </a>
                             </li>
                         </div>
                     </div>

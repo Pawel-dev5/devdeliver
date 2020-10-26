@@ -4,7 +4,7 @@ import BookInfo from "./components/Books"
 import { Provider } from "use-react-modal";
 
 const SearchInfo = () => {
-  const [number, setNumber] = useState("");
+  const [search, setSearch] = useState("");
   const [items, setItems] = useState([]);
   const [error, setError] = useState("");
 
@@ -20,7 +20,7 @@ const SearchInfo = () => {
     let tempError = "";
 
     if (tempError === "") {
-      fetch(`${API_URL}${number}&${urlData}`)
+      fetch(`${API_URL}${search}&${urlData}`)
         .then(resp => resp.json())
         .then(data => {
           if (data.items) {
@@ -40,16 +40,15 @@ const SearchInfo = () => {
    
   }
   const change = e => {
-    setNumber(e.target.value)
+    setSearch(e.target.value)
 
   };
-
 
   const Filter = () => {
     let itemsFiltred = items;
     const MountaineersCategory = itemsFiltred.filter((item) => item.volumeInfo.categories);
     setItems(MountaineersCategory)
-    console.log(MountaineersCategory)
+    console.log(MountaineersCategory.toString())
   }
 
   const FilterDisc = () => {
@@ -59,11 +58,10 @@ const SearchInfo = () => {
   const ClearAll = () => {
     setItems([]);
     setError("Wpisz tytuł, aby wyszukać swoją ulubioną książkę")
-    setNumber("");
+    setSearch("");
   }
   return (
     <div>
-
       <div className="">
         <div className="header">
           <h1 className="">Twoja baza książek</h1>
@@ -77,7 +75,7 @@ const SearchInfo = () => {
           <label>
             <input
               placeholder="Wpisz tytuł"
-              type="text"
+              type="search"
               onChange={change}
             >
             </input>
