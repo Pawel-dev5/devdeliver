@@ -1,5 +1,7 @@
 import React from "react";
+import { Route } from "react-router-dom";
 import SingleBook from "./singlebook";
+import BookPage from "./BookPage";
 
 const BookInfo = (props) => {
     const {
@@ -27,6 +29,11 @@ const BookInfo = (props) => {
                     </>
                 )}
             {items.map(item => <SingleBook item={item} key={item.id} />)}
+            <Route path="book">
+                <BookPage item={items} key={items.id}>
+                    {/* {items.map(item => <SingleBook item={item} key={item.id} />)} */}
+                </BookPage>
+            </Route>
         </>
     );
 };

@@ -1,7 +1,12 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import "./App.css";
 import BookInfo from "./components/Books"
 import { Provider } from "use-react-modal";
+import {
+  BrowserRouter,
+  Route,
+  Switch,
+} from "react-router-dom";
 
 const SearchInfo = () => {
   const [search, setSearch] = useState("");
@@ -18,7 +23,6 @@ const SearchInfo = () => {
   const handleChangeNumber = e => {
     e.preventDefault();
     let tempError = "";
-
     if (tempError === "") {
       fetch(`${API_URL}${search}&${urlData}`)
         .then(resp => resp.json())
@@ -32,25 +36,20 @@ const SearchInfo = () => {
         .catch(() => {
           setError("Bład serwera");
         });
-    }
-
+      }
     if (error) {
       return error;
     }
-   
   }
   const change = e => {
     setSearch(e.target.value)
-
   };
-
   const Filter = () => {
     let itemsFiltred = items;
     const MountaineersCategory = itemsFiltred.filter((item) => item.volumeInfo.categories);
     setItems(MountaineersCategory)
     console.log(MountaineersCategory.toString())
   }
-
   const FilterDisc = () => {
     const Discription = items.filter((item) => item.volumeInfo.description);
     setItems(Discription)
@@ -84,16 +83,24 @@ const SearchInfo = () => {
         </div>
       </form>
       <div className="content-container">
-            <>
-              <Provider background="rgba(0, 0, 0, 0.9)">
-                <BookInfo items={items} ClearAll={ClearAll} FilterDisc={FilterDisc} Filter={Filter} />
-              </Provider>
-            </>
+        <Provider background="rgba(0, 0, 0, 0.9)">
+          <BookInfo items={items} ClearAll={ClearAll} FilterDisc={FilterDisc} Filter={Filter} />
+        </Provider>
       </div>
     </div>
   );
 }
 
 export default function App() {
-  return <SearchInfo />
+  return (
+    <>
+      <BrowserRouter>
+        <Switch>
+          <Route exact path='/'>
+            <SearchInfo value="kukuczka" />
+          </Route>
+        </Switch>
+      </BrowserRouter>
+    </>
+  )
 }
