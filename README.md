@@ -1,3 +1,17 @@
+## Uruchomienie projektu
+
+**Sklonuj repozytorium**
+https://github.com/Pawel-dev5/devdeliver.git
+
+**Zainstalacja Create React App**
+https://github.com/facebook/create-react-app
+
+**Zainstaluj React modal**
+https://github.com/reactjs/react-modal
+
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
