@@ -1,81 +1,99 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import "./App.css";
-
-const API_URL = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
-
+import BookInfo from "./components/Books"
+import { Provider } from "use-react-modal";
 
 const SearchInfo = () => {
-  const [number, setNumber] = useState("");
+  const [search, setSearch] = useState("");
+  const [items, setItems] = useState([]);
+  const [error, setError] = useState("");
 
-  const handleChangeNumber = (e) => {
-    setNumber(e.target.value)
+  const API_URL = "https://www.googleapis.com/books/v1/volumes?q=intitle:";
+  const data = {
+    key: "AIzaSyAYqfMYbCl0IxItamsRqvXqJXfX2kcwhXI",
+    source: 'pl',
   }
-  // console.log(number)
+  const urlData = new URLSearchParams(Object.entries(data));
 
+  const handleChangeNumber = e => {
+    e.preventDefault();
+    let tempError = "";
 
-  const BookInfo = ({ number }) => {
-    const [items, setItems] = useState([]);
-    const [error, setError] = useState("");
-    const isbn = number;
-    // const [number, setNumber] = useState("");
-    console.log(isbn)
-
-    // const handleChangeNumber = (e) => {
-    //   setNumber(e.target.value)
-    // }
-
-    useEffect(() => {
-      fetch(`${API_URL}${isbn}`)
+    if (tempError === "") {
+      fetch(`${API_URL}${search}&${urlData}`)
         .then(resp => resp.json())
         .then(data => {
           if (data.items) {
             setItems(data.items);
           } else {
-            setError("BRAK");
+            setError("Brak danych");
           }
         })
         .catch(() => {
           setError("Bład serwera");
         });
-    }, []);
+    }
 
     if (error) {
       return error;
     }
-    if (items.length === 0) {
-      return "Trwa ładowanie";
-    }
-    return (
-      <div>
-        <ul>
-          {items.map(item => {
-            return <li key={item.id}>{item.volumeInfo.title}</li>;
-          })}
-        </ul>
-      </div>
-    );
+   
+  }
+  const change = e => {
+    setSearch(e.target.value)
+
   };
 
+  const Filter = () => {
+    let itemsFiltred = items;
+    const MountaineersCategory = itemsFiltred.filter((item) => item.volumeInfo.categories);
+    setItems(MountaineersCategory)
+    console.log(MountaineersCategory.toString())
+  }
+
+  const FilterDisc = () => {
+    const Discription = items.filter((item) => item.volumeInfo.description);
+    setItems(Discription)
+  }
+  const ClearAll = () => {
+    setItems([]);
+    setError("Wpisz tytuł, aby wyszukać swoją ulubioną książkę")
+    setSearch("");
+  }
   return (
-    <>
-      <div>
-        <label>
-          <input
-            type="text"
-            value={number}
-            onChange={handleChangeNumber}>
-          </input>
-        </label>
+    <div>
+      <div className="">
+        <div className="header">
+          <h1 className="">Twoja baza książek</h1>
+          <p className="">
+            Wyszukuj swoje ulubione książki. Dane dostarcza <a href="https://developers.google.com/" target="_blank" rel="noopener noreferrer">Google API</a>.
+          </p>
+        </div>
       </div>
-      <BookInfo number={number} />
-    </>
+      <form onSubmit={handleChangeNumber}>
+        <div className="MainBox" >
+          <label>
+            <input
+              placeholder="Wpisz tytuł"
+              type="search"
+              onChange={change}
+            >
+            </input>
+            <button type="submit">Szukaj</button>
+          </label>
+        </div>
+      </form>
+      <div className="content-container">
+            <>
+              <Provider background="rgba(0, 0, 0, 0.9)">
+                <BookInfo items={items} ClearAll={ClearAll} FilterDisc={FilterDisc} Filter={Filter} />
+              </Provider>
+            </>
+      </div>
+    </div>
   );
 }
 
-
-
 export default function App() {
-  return (
-    <SearchInfo />
-  )
+  return <SearchInfo />
 }
